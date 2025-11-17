@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai"; // correct SDK import
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import { questionAnswerPrompt, conceptExplainPrompt } from "../utils/prompts.js";
 
@@ -20,6 +20,25 @@ const safeJSONParse = (text) => {
   }
 };
 
+// Retry helper with exponential backoff + jitter
+const generateWithRetry = async (options, maxRetries = 5, initialDelay = 1000) => {
+  let delay = initialDelay;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await ai.models.generateContent(options);
+    } catch (err) {
+      if (err.status === 503 && attempt < maxRetries) {
+        const jitter = Math.floor(Math.random() * 500); // random 0-500ms
+        console.warn(`Service busy. Retrying in ${delay + jitter}ms... (${attempt}/${maxRetries})`);
+        await new Promise(r => setTimeout(r, delay + jitter));
+        delay *= 2; // exponential backoff
+      } else {
+        throw err;
+      }
+    }
+  }
+};
+
 // Generate interview questions
 export const generateInterviewQuestion = async (req, res) => {
   try {
@@ -31,12 +50,12 @@ export const generateInterviewQuestion = async (req, res) => {
 
     const prompt = questionAnswerPrompt(role, experience, topicsToFocus, numberOfQuestions);
 
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // or "text-bison-001" if your account has access
+    const result = await generateWithRetry({
+      model: "gemini-2.5-flash",
       contents: prompt,
     });
 
-    const rawText = result.text;
+    const rawText = result.text || "";
 
     const { parsed: data, success } = safeJSONParse(
       rawText.replace(/```(?:json|javascript)?/g, "").replace(/```/g, "").trim()
@@ -45,7 +64,10 @@ export const generateInterviewQuestion = async (req, res) => {
     res.status(200).json(success ? data : { text: rawText });
   } catch (err) {
     console.error("Error generating questions:", err);
-    res.status(500).json({ message: "Failed to generate questions", error: err.message });
+    res.status(503).json({
+      message: "Service temporarily unavailable. Please try again later.",
+      error: err.message,
+    });
   }
 };
 
@@ -57,12 +79,12 @@ export const generateConceptExplanation = async (req, res) => {
 
     const prompt = conceptExplainPrompt(question);
 
-    const result = await ai.models.generateContent({
+    const result = await generateWithRetry({
       model: "gemini-2.5-flash",
       contents: prompt,
     });
 
-    const rawText = result.text;
+    const rawText = result.text || "";
 
     const { parsed: data, success } = safeJSONParse(
       rawText.replace(/```(?:json|javascript)?/g, "").replace(/```/g, "").trim()
@@ -71,6 +93,9 @@ export const generateConceptExplanation = async (req, res) => {
     res.status(200).json(success ? data : { text: rawText });
   } catch (err) {
     console.error("Error generating explanation:", err);
-    res.status(500).json({ message: "Failed to generate explanation", error: err.message });
+    res.status(503).json({
+      message: "Service temporarily unavailable. Please try again later.",
+      error: err.message,
+    });
   }
 };

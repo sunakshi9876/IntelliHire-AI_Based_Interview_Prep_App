@@ -23,16 +23,18 @@ const Landingpage = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="w-full min-h-screen bg-gradient-to-b from-yellow-50 to-yellow-100 relative overflow-hidden py-16">
+      <div className="w-full min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 relative overflow-hidden py-24">
         {/* Header */}
-        <header className="container mx-auto flex justify-between items-center px-6 sm:px-12 mb-12">
-          <h1 className="text-3xl font-bold text-gray-800">IntelliHire</h1>
+        <header className="container mx-auto flex justify-between items-center px-6 sm:px-12 mb-16">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-900 tracking-tight">
+            IntelliHire
+          </h1>
           {user ? (
             <ProfileinfoCard />
           ) : (
             <button
               onClick={() => setOpenAuthModal(true)}
-              className="bg-amber-600 hover:bg-black text-white px-6 py-2.5 rounded-full font-semibold shadow-lg transition-all"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all transform hover:scale-105"
             >
               Login / Sign Up
             </button>
@@ -43,67 +45,82 @@ const Landingpage = () => {
         <div className="container mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-start gap-12">
           {/* Left Text */}
           <div className="md:w-1/2 space-y-6">
-            <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 bg-amber-200 px-3 py-1 rounded-full border border-amber-300 animate-pulse">
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-800 bg-indigo-200 px-4 py-1.5 rounded-full border border-indigo-300 animate-pulse shadow-sm">
               <LuSparkles /> AI-Powered
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-              Master Interviews with <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-yellow-300 to-yellow-200 animate-text-shine">AI Guidance</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-indigo-900 leading-tight">
+              Master Interviews with{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-red-400 animate-text-shine">
+                AI Guidance
+              </span>
             </h1>
 
-            <p className="text-gray-700 text-lg">
-              Get personalized questions, detailed explanations, and structured learning paths to ace your interviews. IntelliHire adapts to your skills and guides you step by step.
+            <p className="text-gray-700 text-lg sm:text-xl leading-relaxed">
+              Get personalized questions, detailed explanations, and structured
+              learning paths to ace your interviews. IntelliHire adapts to your
+              skills and guides you step by step.
             </p>
 
             <button
               onClick={handleCTA}
-              className="bg-black text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-yellow-100 hover:text-black border border-yellow-50 transition-all shadow-lg"
+              className="bg-indigo-700 hover:bg-purple-600 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-lg transition-all transform hover:scale-105"
             >
               Get Started
             </button>
           </div>
 
-          {/* Right Content Filled with Text/Highlights */}
+          {/* Right Modules */}
           <div className="md:w-1/2 grid gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-amber-100 hover:shadow-2xl transition-all">
-              <div className="flex items-center gap-3 text-amber-600 mb-2">
-                <LuBook /> Learn
+            {[
+              {
+                title: "Interview Prep",
+                desc: "Practice with mock interviews, AI-generated questions, and instant feedback.",
+                action: handleCTA,
+                icon: <LuBook className="text-purple-500" />,
+              },
+              {
+                title: "Job Recommendation & Resume Analysis",
+                desc: "Get personalized job suggestions, ATS score analysis, and resume optimization tips.",
+                icon: <LuTarget className="text-pink-500" />,
+              },
+              {
+                title: "Resume Builder",
+                desc: "Create professional resumes easily with guided templates and AI suggestions.",
+                icon: <LuActivity className="text-red-500" />,
+              },
+            ].map((module, index) => (
+              <div
+                key={index}
+                onClick={module.action}
+                className="cursor-pointer bg-white p-6 rounded-3xl shadow-xl border border-gray-200 transition-all hover:shadow-2xl hover:scale-105 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50"
+              >
+                <div className="flex items-center gap-3 text-lg font-semibold mb-2">
+                  {module.icon} {module.title}
+                </div>
+                <p className="text-gray-700">{module.desc}</p>
               </div>
-              <p className="text-gray-700">
-                Structured learning modules with role-specific content to prepare you efficiently.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-amber-100 hover:shadow-2xl transition-all">
-              <div className="flex items-center gap-3 text-amber-600 mb-2">
-                <LuTarget /> Practice
-              </div>
-              <p className="text-gray-700">
-                Interactive mock questions and real-time feedback to improve your answers.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-amber-100 hover:shadow-2xl transition-all">
-              <div className="flex items-center gap-3 text-amber-600 mb-2">
-                <LuActivity /> Track
-              </div>
-              <p className="text-gray-700">
-                Progress tracking, analytics, and recommendations tailored to your growth.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Features Section */}
-      <section className="w-full bg-[#FFFCEF] py-20">
+      <section className="w-full bg-gradient-to-t from-purple-50 to-white py-24">
         <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-indigo-900 mb-16">
             Features that Make You Shine ✨
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {APP_FEATURES.map((feature) => (
-              <div key={feature.id} className="bg-[#FFFEF8] p-6 rounded-2xl shadow-md hover:shadow-2xl border border-amber-100 transition-all hover:scale-105">
-                <h3 className="text-lg font-semibold mb-3 text-gray-900">{feature.title}</h3>
+              <div
+                key={feature.id}
+                className="bg-white p-6 rounded-3xl shadow-lg border border-gray-200 transition-all hover:shadow-2xl hover:scale-105 hover:bg-purple-50"
+              >
+                <h3 className="text-lg font-semibold mb-3 text-indigo-900">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
@@ -111,8 +128,26 @@ const Landingpage = () => {
         </div>
       </section>
 
+      {/* Contact Us Section */}
+      <section className="w-full bg-indigo-50 py-20">
+        <div className="container mx-auto px-6 md:px-12 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-indigo-900 mb-6">
+            Contact Us
+          </h2>
+          <p className="text-gray-700 mb-8 text-lg">
+            Have questions or need assistance? Reach out to us!
+          </p>
+          <button
+            onClick={() => navigate("/contact")}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-lg transition-all transform hover:scale-105"
+          >
+            Get in Touch
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-gray-50 text-center py-6 mt-10 border-t border-gray-200">
+      <footer className="bg-white text-center py-8 border-t border-gray-200">
         <p className="text-gray-500 text-sm">
           &copy; {new Date().getFullYear()} IntelliHire – Your AI Interview Companion
         </p>

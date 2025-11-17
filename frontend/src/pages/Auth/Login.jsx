@@ -16,23 +16,13 @@ const Login = ({ setCurrentPage }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email');
-      return;
-    }
-
-    if (!password) {
-      setError('Please enter your password');
-      return;
-    }
-
-    setError(''); // Clear previous errors
+    if (!validateEmail(email)) return setError('Please enter a valid email');
+    if (!password) return setError('Please enter your password');
+    setError('');
 
     try {
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, { email, password });
       const { token } = response.data;
-
       if (token) {
         localStorage.setItem('token', token);
         updateUser(response.data);
@@ -44,20 +34,34 @@ const Login = ({ setCurrentPage }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h3>
-        <p className="text-sm text-gray-500 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-100 p-4">
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md sm:px-12 sm:py-12 px-6 py-8 transform transition-transform duration-500 hover:scale-[1.02] border border-gray-200">
+        
+        {/* Back / Switch Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => setCurrentPage('signup')}
+            className="flex items-center text-indigo-600 hover:text-purple-600 font-medium transition-colors duration-300"
+          >
+            &#8592; Back
+          </button>
+        </div>
+
+        <h3 className="text-3xl sm:text-4xl font-extrabold text-indigo-900 mb-2 text-center">
+          Welcome Back
+        </h3>
+        <p className="text-gray-700 text-lg sm:text-xl mb-6 text-center">
           Enter your credentials to log in to your account.
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           <Input
             value={email}
             onChange={({ target }) => setEmail(target.value)}
             label="Email Address"
             placeholder="you@example.com"
             type="email"
+            className="focus:ring-indigo-400 focus:border-indigo-500 rounded-xl shadow-sm"
           />
           <Input
             value={password}
@@ -65,13 +69,14 @@ const Login = ({ setCurrentPage }) => {
             label="Password"
             placeholder="Min 8 characters"
             type="password"
+            className="focus:ring-indigo-400 focus:border-indigo-500 rounded-xl shadow-sm"
           />
 
-          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+          {error && <p className="text-sm text-red-500 mt-1 text-center">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-xl font-semibold transition-all duration-300"
+            className="w-full bg-indigo-700 hover:bg-purple-600 text-white py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-lg"
           >
             LOGIN
           </button>
@@ -81,7 +86,7 @@ const Login = ({ setCurrentPage }) => {
             <button
               type="button"
               onClick={() => setCurrentPage('signup')}
-              className="text-orange-500 font-medium underline hover:text-orange-600"
+              className="text-purple-600 font-medium underline hover:text-indigo-700"
             >
               Sign Up
             </button>
