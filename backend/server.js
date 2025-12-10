@@ -8,6 +8,7 @@ import questionRoutes from './Routers/questionRoutes.js'
 import protect from './Middleware/authMiddleware.js'
 import { generateInterviewQuestion, generateConceptExplanation } from './controllers/aicontroller.js'
 
+
 dotenv.config()
 const app = express()
 
@@ -29,15 +30,16 @@ app.use('/api/auth', authRoutes)
 app.use('/api/sessions', sessionRoutes)
 app.use('/api/questions', questionRoutes)
 
-// AI Routes - only register if OPENAI_API_KEY exists
+
+// AI Routes
 if (process.env.GEMINI_API_KEY) {
   app.use('/api/ai/generate-questions', protect, generateInterviewQuestion)
   app.use('/api/ai/generate-explanation', protect, generateConceptExplanation)
 } else {
-  console.warn("AI routes disabled: Missing OPENAI_API_KEY in .env")
+  console.warn("AI routes disabled: Missing GEMINI_API_KEY in .env")
 }
 
-// Start server
+// ⬇ Server Start
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

@@ -8,12 +8,16 @@ import Login from "./Auth/Login";
 import Signup from "./Auth/Signup";
 import { UserContext } from "../context/useContext";
 import ProfileinfoCard from "../context/Cards/ProfileinfoCard";
+import ResumeAnalysis from "../Components/ResumeAnalysis";
+import JobRecommendation from "../Components/JobRecommendation";
 
 const Landingpage = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState("login");
+  const [openResumeModal, setOpenResumeModal] = useState(false);
+  const [openJobRecoModal, setOpenJobRecoModal] = useState(false);
 
   const handleCTA = () => {
     if (!user) setOpenAuthModal(true);
@@ -26,15 +30,16 @@ const Landingpage = () => {
       <div className="w-full min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 relative overflow-hidden py-24">
         {/* Header */}
         <header className="container mx-auto flex justify-between items-center px-6 sm:px-12 mb-16">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-900 tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-text-shine tracking-tight">
             IntelliHire
           </h1>
+
           {user ? (
             <ProfileinfoCard />
           ) : (
             <button
               onClick={() => setOpenAuthModal(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all transform hover:scale-105"
+              className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:from-indigo-700 hover:to-pink-600 text-white px-6 py-3 rounded-full font-semibold shadow-xl transition-all transform hover:scale-105"
             >
               Login / Sign Up
             </button>
@@ -64,7 +69,7 @@ const Landingpage = () => {
 
             <button
               onClick={handleCTA}
-              className="bg-indigo-700 hover:bg-purple-600 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-lg transition-all transform hover:scale-105"
+              className="bg-gradient-to-r from-indigo-700 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-indigo-700 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-xl transition-all transform hover:scale-105"
             >
               Get Started
             </button>
@@ -75,19 +80,21 @@ const Landingpage = () => {
             {[
               {
                 title: "Interview Prep",
-                desc: "Practice with mock interviews, AI-generated questions, and instant feedback.",
+                desc: "Practice mock interviews with AI-generated questions, evaluations, and instant feedback.",
                 action: handleCTA,
                 icon: <LuBook className="text-purple-500" />,
               },
               {
-                title: "Job Recommendation & Resume Analysis",
-                desc: "Get personalized job suggestions, ATS score analysis, and resume optimization tips.",
+                title: "AI-Based Resume Analysis",
+                desc: "Get ATS scoring, skill gap insights, formatting suggestions, and tailored resume improvements.",
                 icon: <LuTarget className="text-pink-500" />,
+                action: () => setOpenResumeModal(true),
               },
               {
-                title: "Resume Builder",
-                desc: "Create professional resumes easily with guided templates and AI suggestions.",
+                title: "AI-Based Job Recommendation",
+                desc: "Discover job roles matched to your skills and experience using intelligent AI-based matching.",
                 icon: <LuActivity className="text-red-500" />,
+                action: () => setOpenJobRecoModal(true),
               },
             ].map((module, index) => (
               <div
@@ -104,6 +111,22 @@ const Landingpage = () => {
           </div>
         </div>
       </div>
+
+      {/* Resume Analysis Modal */}
+      <Modal
+        isOpen={openResumeModal}
+        onClose={() => setOpenResumeModal(false)}
+      >
+        <ResumeAnalysis />
+      </Modal>
+
+      {/* Job Recommendation Modal */}
+      <Modal
+        isOpen={openJobRecoModal}
+        onClose={() => setOpenJobRecoModal(false)}
+      >
+        <JobRecommendation />
+      </Modal>
 
       {/* Features Section */}
       <section className="w-full bg-gradient-to-t from-purple-50 to-white py-24">
@@ -128,7 +151,7 @@ const Landingpage = () => {
         </div>
       </section>
 
-      {/* Contact Us Section */}
+      {/* Contact Section */}
       <section className="w-full bg-indigo-50 py-20">
         <div className="container mx-auto px-6 md:px-12 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-indigo-900 mb-6">
@@ -139,7 +162,7 @@ const Landingpage = () => {
           </p>
           <button
             onClick={() => navigate("/contact")}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-lg transition-all transform hover:scale-105"
+            className="bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-500 hover:from-indigo-600 hover:to-purple-600 text-white px-10 py-3 rounded-full font-semibold text-lg shadow-xl transition-all transform hover:scale-105"
           >
             Get in Touch
           </button>

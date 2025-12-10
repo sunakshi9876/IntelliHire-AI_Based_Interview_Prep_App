@@ -12,7 +12,7 @@ const ProfileinfoCard = () => {
     navigate('/');
   };
 
-  if (!user) return null; // Don't render if user is undefined
+  if (!user) return null;
 
   const initials = user.name
     ? user.name
@@ -25,23 +25,27 @@ const ProfileinfoCard = () => {
 
   return (
     <div className="flex items-center gap-3">
+      {/* Profile Image or Initials */}
       {user.profileImageUrl ? (
         <img
           src={user.profileImageUrl}
           alt={user.name || 'Profile'}
-          className="w-11 h-11 rounded-full bg-gray-300 object-cover shadow-sm"
+          className="w-12 h-12 rounded-full object-cover shadow-sm"
         />
       ) : (
-        <div className="w-11 h-11 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
           {initials}
         </div>
       )}
 
-      <div className="flex flex-col">
-        <span className="text-sm font-semibold text-gray-900">{user.name || ''}</span>
+      {/* Username + Logout */}
+      <div className="flex flex-col justify-center -mt-1">
+        <span className="text-lg sm:text-xl font-semibold text-indigo-900">
+          {user.name || ''}
+        </span>
         <button
-          className="text-amber-600 text-xs font-medium hover:underline hover:text-amber-700 transition-colors"
           onClick={handleLogout}
+          className="text-indigo-600 text-sm sm:text-base font-medium hover:underline hover:text-indigo-700 transition-colors"
         >
           Logout
         </button>
