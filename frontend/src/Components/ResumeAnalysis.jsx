@@ -1,110 +1,103 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const ResumeAnalysis = () => {
   const [file, setFile] = useState(null);
-  const [analysisResult, setAnalysisResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setAnalysisResult(null);
+    setResult(null);
+    setErrorMsg("");
   };
 
-  const handleAnalyze = () => {
-    if (!file) return alert("Please upload a resume first.");
+  const handleUpload = async () => {
+    if (!file) {
+      setErrorMsg("Please upload a PDF resume first.");
+      return;
+    }
 
-    // Dummy analysis data
-    setAnalysisResult({
-      atsScore: 85,
-      skillsMatched: ["JavaScript", "React", "Node.js", "CSS", "TailwindCSS"],
-      formattingSuggestions:
-        "Use clear headings, bullet points, and quantifiable metrics for experience.",
-      summary:
-        "Your resume is well-structured. Emphasize measurable achievements to improve impact."
-    });
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+      setLoading(true);
+      setErrorMsg("");
+
+      const res = await axios.post(
+        "http://localhost:5001/analyze",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setResult(res.data);
+    } catch (err) {
+      setErrorMsg("Error analyzing resume. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-4 w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 overflow-y-auto max-h-[70vh]">
-      <h2 className="text-2xl font-bold mb-4 text-indigo-900 text-center">
-        AI Resume Analysis
+    <div className="w-full max-w-2xl mx-auto p-6">
+      <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 text-indigo-700">
+        AI-Based Resume Analysis
       </h2>
 
       {/* File Upload */}
-      <div className="mb-4">
+      <div className="border-2 border-dashed border-indigo-400 p-8 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 text-center shadow-inner hover:shadow-lg transition-shadow duration-300">
         <input
           type="file"
-          accept=".pdf,.doc,.docx"
+          accept="application/pdf"
           onChange={handleFileChange}
-          className="w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:bg-gradient-to-r file:from-indigo-100 file:to-purple-100
-            file:text-indigo-700 file:font-semibold
-            hover:file:from-indigo-200 hover:file:to-purple-200
-            cursor-pointer
-          "
+          className="mb-4 cursor-pointer"
         />
-        {file && (
-          <p className="mt-2 text-gray-700 text-sm text-center truncate">
-            Selected: <span className="font-semibold">{file.name}</span>
-          </p>
-        )}
+        <p className="text-gray-600 text-sm">
+          Upload your resume in PDF format
+        </p>
       </div>
 
-      {/* Analyze Button */}
-      <div className="flex justify-center mb-4">
-        <button
-          onClick={handleAnalyze}
-          className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2 rounded-full font-semibold shadow hover:scale-105 transform transition duration-300 text-sm"
-        >
-          Analyze Resume
-        </button>
-      </div>
+      {/* Upload Button */}
+      <button
+        onClick={handleUpload}
+        disabled={loading}
+        className="w-full mt-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transform transition-all duration-300"
+      >
+        {loading ? "Analyzing..." : "Analyze Resume"}
+      </button>
 
-      {/* Analysis Result */}
-      {analysisResult && (
-        <div className="bg-indigo-50 p-4 rounded-xl shadow-inner border border-indigo-100 text-sm">
-          <h3 className="font-semibold text-indigo-900 mb-3 text-center">
-            Analysis Result
+      {/* Error Message */}
+      {errorMsg && (
+        <p className="text-red-500 text-center mt-4 font-medium">{errorMsg}</p>
+      )}
+
+      {/* Results */}
+      {result && (
+        <div className="mt-8 p-6 bg-white rounded-2xl shadow-xl border border-gray-200">
+          <h3 className="text-2xl font-bold text-indigo-800 mb-4 text-center">
+            Analysis Report
           </h3>
 
-          {/* ATS Score */}
-          <div className="mb-3">
-            <p className="font-medium text-gray-700 mb-1">ATS Score</p>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all"
-                style={{ width: `${analysisResult.atsScore}%` }}
-              ></div>
-            </div>
-            <p className="text-gray-600 mt-1">{analysisResult.atsScore}%</p>
-          </div>
+          <p className="text-lg font-medium mb-4 text-center">
+            ATS Score:{" "}
+            <span className="text-purple-600 font-extrabold text-xl">
+              {result.atsScore} / 100
+            </span>
+          </p>
 
-          {/* Skills Matched */}
-          <div className="mb-3">
-            <p className="font-medium text-gray-700 mb-1">Skills Matched</p>
-            <div className="flex flex-wrap gap-1">
-              {analysisResult.skillsMatched.map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full"
-                >
-                  {skill}
-                </span>
+          <div className="mt-4">
+            <h4 className="font-semibold text-indigo-700 mb-3 text-lg">
+              Suggestions:
+            </h4>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2">
+              {result?.suggestions?.map((item, index) => (
+                <li key={index} className="hover:text-purple-600 transition-colors duration-200">
+                  {item}
+                </li>
               ))}
-            </div>
-          </div>
-
-          {/* Formatting Suggestions */}
-          <div className="mb-3">
-            <p className="font-medium text-gray-700 mb-1">Formatting Suggestions</p>
-            <p className="text-gray-600">{analysisResult.formattingSuggestions}</p>
-          </div>
-
-          {/* Summary */}
-          <div>
-            <p className="font-medium text-gray-700 mb-1">Summary</p>
-            <p className="text-gray-600">{analysisResult.summary}</p>
+            </ul>
           </div>
         </div>
       )}

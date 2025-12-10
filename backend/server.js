@@ -31,6 +31,7 @@ app.use('/api/sessions', sessionRoutes)
 app.use('/api/questions', questionRoutes)
 
 
+
 // AI Routes
 if (process.env.GEMINI_API_KEY) {
   app.use('/api/ai/generate-questions', protect, generateInterviewQuestion)
